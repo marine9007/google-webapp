@@ -1,0 +1,27 @@
+# GCP Project Configuration
+# Copy this file to terraform.tfvars and customize as needed
+# Note: Authentication is handled via 'gcloud auth application-default login'
+
+# FREE TIER: This config uses GCP Always Free resources:
+# - 1x e2-micro instance (must be in us-west1, us-central1, or us-east1)
+# - 30 GB standard persistent disk
+# - 1 GB network egress per month
+# Keep this the ONLY instance in these regions to stay free
+
+project_id   = "marine9007"
+region       = "us-central1"      # FREE TIER eligible region
+zone         = "us-central1-a"    # FREE TIER eligible zone
+machine_type = "e2-micro"         # FREE TIER (1 instance free per month)
+app_name     = "basic-webapp"
+
+# Other common regions:
+# region = "us-east1"          # South Carolina
+# region = "us-west1"          # Oregon
+# region = "europe-west1"      # Belgium
+# region = "asia-southeast1"   # Singapore
+
+# Other machine types:
+# machine_type = "e2-small"    # 2 vCPU, 2 GB RAM
+# machine_type = "e2-medium"   # 2 vCPU, 4 GB RAM
+# machine_type = "n1-standard-1" # 1 vCPU, 3.75 GB RAM
+
