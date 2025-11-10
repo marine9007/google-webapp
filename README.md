@@ -8,12 +8,29 @@ Simple web application infrastructure deployed on Google Cloud Platform using Te
 - [Google Cloud SDK](https://cloud.google.com/sdk/docs/install)
 - GCP Project with billing enabled
 
-## Setup
+## Deployment Options
+
+### Option 1: GitHub Actions (Recommended)
+
+Use the automated workflow for deployment:
+
+1. **Actions** → **GCP Compute Engine - Basic Web App** → **Run workflow**
+2. Select action:
+   - `plan` - Review changes without deploying
+   - `apply` - Deploy infrastructure
+   - `destroy` - Remove all resources (requires typing "destroy" to confirm)
+3. Click **Run workflow**
+
+The workflow provides detailed summaries including deployment vitals, access URLs, and cost information.
+
+**Prerequisites:**
+- `GCP_SA_KEY` secret must be configured (see `.github/SETUP.md`)
+
+### Option 2: Local Terraform
 
 1. **Authenticate with GCP:**
 ```bash
-gcloud auth application-default login
-gcloud config set project marine9007
+export GOOGLE_APPLICATION_CREDENTIALS="./your-service-account-key.json"
 ```
 
 2. **Enable required APIs:**
@@ -28,12 +45,12 @@ terraform init
 
 4. **Review the plan:**
 ```bash
-terraform plan
+terraform plan -out=tfplan
 ```
 
 5. **Deploy:**
 ```bash
-terraform apply
+terraform apply tfplan
 ```
 
 6. **Access your web app:**
@@ -56,8 +73,23 @@ This configuration uses GCP Always Free resources:
 
 Keep this as your ONLY e2-micro instance in these regions to stay 100% free.
 
+## Workflow Security
+
+The GitHub Actions workflow includes:
+- User authorization (only `@marine9007` can run)
+- Destroy confirmation required
+- Concurrency control (prevents parallel runs)
+- Pinned action versions (stable, no surprise updates)
+- Credential isolation (secrets never exposed in logs)
+
+See `.github/SECURITY.md` for full security documentation.
+
 ## Cleanup
 
+**Via GitHub Actions:**
+- Actions → Run workflow → Select `destroy` → Type "destroy" to confirm
+
+**Via Local Terraform:**
 ```bash
 terraform destroy
 ```
@@ -73,3 +105,9 @@ zone         = "us-east1-b"
 machine_type = "e2-small"
 ```
 
+ ____        _                 
+/ ___| _ __ (_)_ __   ___ _ __ 
+\___ \| '_ \| | '_ \ / _ \ '__|
+ ___) | | | | | |_) |  __/ |   
+|____/|_| |_|_| .__/ \___|_|   
+              |_|              
