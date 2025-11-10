@@ -128,10 +128,34 @@ jobs:
           
           if [ "${{ github.event.inputs.action }}" = "plan" ] && [ "${{ steps.plan.outcome }}" = "success" ]; then
             echo "### 📋 Plan Results" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
             echo "Terraform plan executed successfully." >> $GITHUB_STEP_SUMMARY
-            echo "Review the plan output in the job logs above." >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            echo "### 🎯 Deployment Target" >> $GITHUB_STEP_SUMMARY
+            echo "| Resource | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| **GCP Project** | \`marine9007\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Region** | \`us-central1\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Zone** | \`us-central1-a\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Instance Type** | \`e2-micro\` (FREE TIER) |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Instance Name** | \`basic-webapp-instance\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Network** | \`basic-webapp-network\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Firewall Rules** | HTTP/HTTPS (80, 443), SSH (22) |" >> $GITHUB_STEP_SUMMARY
+            echo "| **OS Image** | Debian 11 |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Disk Size** | 10 GB standard persistent disk |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            echo "### 📊 Resources to be Created" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ VPC Network (\`basic-webapp-network\`)" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Firewall Rule - HTTP/HTTPS (\`basic-webapp-allow-http\`)" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Firewall Rule - SSH (\`basic-webapp-allow-ssh\`)" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Compute Engine Instance (\`basic-webapp-instance\`)" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Ephemeral Public IP (auto-assigned)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            echo "**💰 Estimated Cost**: \$0/month (FREE TIER)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Review the detailed plan output in the job logs above before running \`apply\`." >> $GITHUB_STEP_SUMMARY
           fi
           
           if [ "${{ github.event.inputs.action }}" = "apply" ] && [ "${{ steps.apply.outcome }}" = "success" ]; then
@@ -139,7 +163,7 @@ jobs:
             echo "Infrastructure successfully deployed!" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             
-            echo "### 🌐 Infrastructure Details" >> $GITHUB_STEP_SUMMARY
+            echo "### 🌐 Deployed Infrastructure" >> $GITHUB_STEP_SUMMARY
             echo "| Resource | Value |" >> $GITHUB_STEP_SUMMARY
             echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
             echo "| **GCP Project** | \`marine9007\` |" >> $GITHUB_STEP_SUMMARY
@@ -149,6 +173,8 @@ jobs:
             echo "| **Instance Name** | \`${{ env.INSTANCE_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
             echo "| **Network** | \`${{ env.NETWORK_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
             echo "| **Public IP** | \`${{ env.PUBLIC_IP }}\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| **OS Image** | Debian 11 |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Disk Size** | 10 GB |" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             
             echo "### 🔗 Access Information" >> $GITHUB_STEP_SUMMARY
