@@ -50,6 +50,7 @@ You need to add your GCP service account key as a GitHub secret.
    - Select **GCP Compute Engine**
    - Click **Run workflow**
    - Select action: `destroy`
+   - **IMPORTANT:** Type `destroy` in the "confirm_destroy" field
    - Click **Run workflow**
 
 ## Best Practices
