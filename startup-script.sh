@@ -129,6 +129,7 @@ cat > /var/www/html/index.html <<'EOF'
         
         <div class="info">
             <p>Or send directly to:</p>
+            <!-- UPDATE THIS: Replace 'your-venmo-username' with your actual Venmo username -->
             <p class="username">@your-venmo-username</p>
         </div>
         
@@ -144,7 +145,15 @@ cat > /var/www/html/index.html <<'EOF'
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
     <script>
-        const VENMO_USERNAME = 'your-venmo-username'; // Replace with your Venmo username
+        // ===================================
+        // UPDATE THIS: Replace 'your-venmo-username' with your actual Venmo username
+        // Example: const VENMO_USERNAME = 'JohnDoe123';
+        // This is used for:
+        //   1. Deep link to open Venmo app with payment
+        //   2. QR code generation
+        //   3. Direct link fallback
+        // ===================================
+        const VENMO_USERNAME = 'your-venmo-username';
         
         function openVenmo() {
             const amount = document.getElementById('amount').value;
