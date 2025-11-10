@@ -26,6 +26,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Check Permissions
+        run: |
+          if [ "${{ github.actor }}" != "marine9007" ]; then
+            echo "❌ ERROR: Unauthorized user."
+            echo "This workflow can only be run by @marine9007"
+            echo "Current user: @${{ github.actor }}"
+            exit 1
+          fi
+          echo "✅ User authorized: @${{ github.actor }}"
+      
       - name: Validate Destroy Confirmation
         if: github.event.inputs.action == 'destroy'
         run: |
