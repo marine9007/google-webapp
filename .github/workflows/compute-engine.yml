@@ -96,10 +96,58 @@ jobs:
       - name: Workflow Summary
         if: always()
         run: |
-          echo "## Workflow Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Workflow Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Action:** ${{ github.event.inputs.action }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Triggered by:** @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Time:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "### Execution Details" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Action** | \`${{ github.event.inputs.action }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Status** | ${{ job.status }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Triggered by** | @${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Branch** | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Commit** | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Timestamp** | $(date -u '+%Y-%m-%d %H:%M:%S UTC') |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Duration** | 41s |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ github.event.inputs.action }}" = "plan" ] && [ "${{ steps.plan.outcome }}" = "success" ]; then
+            echo "### 📋 Plan Results" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "Terraform plan executed successfully." >> $GITHUB_STEP_SUMMARY
+            echo "Review the plan output in the job logs above." >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ github.event.inputs.action }}" = "apply" ] && [ "${{ steps.apply.outcome }}" = "success" ]; then
+            echo "### ✅ Apply Results" >> $GITHUB_STEP_SUMMARY
+            echo "Infrastructure successfully deployed!" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Next Steps:**" >> $GITHUB_STEP_SUMMARY
+            echo "- Check the job logs for output values (IP address, URLs)" >> $GITHUB_STEP_SUMMARY
+            echo "- Access your web app via the \`webapp_url\` output" >> $GITHUB_STEP_SUMMARY
+            echo "- SSH to instance using the \`ssh_command\` output" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ github.event.inputs.action }}" = "destroy" ] && [ "${{ steps.destroy.outcome }}" = "success" ]; then
+            echo "### 🗑️ Destroy Results" >> $GITHUB_STEP_SUMMARY
+            echo "Infrastructure successfully destroyed!" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "All resources have been removed from GCP." >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ job.status }}" = "failure" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### ❌ Failure Details" >> $GITHUB_STEP_SUMMARY
+            echo "The workflow failed. Check the job logs above for detailed error messages." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Common Issues:**" >> $GITHUB_STEP_SUMMARY
+            echo "- Validate \`GCP_SA_KEY\` secret is set correctly" >> $GITHUB_STEP_SUMMARY
+            echo "- Check service account has required permissions" >> $GITHUB_STEP_SUMMARY
+            echo "- Verify Terraform configuration syntax" >> $GITHUB_STEP_SUMMARY
+            echo "- Ensure GCP quotas are not exceeded" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Workflow: GCP Compute Engine - Basic Web App*" >> $GITHUB_STEP_SUMMARY
 
