@@ -84,6 +84,12 @@ jobs:
           echo ""
           echo "📊 Outputs:"
           terraform output
+          
+          # Capture outputs for summary
+          echo "WEBAPP_URL=$(terraform output -raw webapp_url 2>/dev/null || echo 'N/A')" >> $GITHUB_ENV
+          echo "PUBLIC_IP=$(terraform output -raw public_ip 2>/dev/null || echo 'N/A')" >> $GITHUB_ENV
+          echo "INSTANCE_NAME=$(terraform output -raw instance_name 2>/dev/null || echo 'N/A')" >> $GITHUB_ENV
+          echo "NETWORK_NAME=$(terraform output -raw network_name 2>/dev/null || echo 'N/A')" >> $GITHUB_ENV
       
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
@@ -122,10 +128,38 @@ jobs:
             echo "### ✅ Apply Results" >> $GITHUB_STEP_SUMMARY
             echo "Infrastructure successfully deployed!" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
+            
+            echo "### 🌐 Infrastructure Details" >> $GITHUB_STEP_SUMMARY
+            echo "| Resource | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| **GCP Project** | \`marine9007\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Region** | \`us-central1\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Zone** | \`us-central1-a\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Instance Type** | \`e2-micro\` (FREE TIER) |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Instance Name** | \`${{ env.INSTANCE_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Network** | \`${{ env.NETWORK_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Public IP** | \`${{ env.PUBLIC_IP }}\` |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            echo "### 🔗 Access Information" >> $GITHUB_STEP_SUMMARY
+            echo "| Type | Link/Command |" >> $GITHUB_STEP_SUMMARY
+            echo "|------|--------------|" >> $GITHUB_STEP_SUMMARY
+            echo "| **Web App URL** | [${{ env.WEBAPP_URL }}](${{ env.WEBAPP_URL }}) |" >> $GITHUB_STEP_SUMMARY
+            echo "| **GCP Console** | [View Instance](https://console.cloud.google.com/compute/instances?project=marine9007) |" >> $GITHUB_STEP_SUMMARY
+            echo "| **SSH Command** | \`gcloud compute ssh ${{ env.INSTANCE_NAME }} --zone=us-central1-a --project=marine9007\` |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            echo "### 💰 Cost Information" >> $GITHUB_STEP_SUMMARY
+            echo "- **Estimated Cost**: \$0/month (FREE TIER)" >> $GITHUB_STEP_SUMMARY
+            echo "- **Instance**: 1x e2-micro in us-central1 (Always Free)" >> $GITHUB_STEP_SUMMARY
+            echo "- **Network Egress**: Free up to 1 GB/month" >> $GITHUB_STEP_SUMMARY
+            echo "- **Storage**: 10 GB standard persistent disk (free)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
             echo "**Next Steps:**" >> $GITHUB_STEP_SUMMARY
-            echo "- Check the job logs for output values (IP address, URLs)" >> $GITHUB_STEP_SUMMARY
-            echo "- Access your web app via the \`webapp_url\` output" >> $GITHUB_STEP_SUMMARY
-            echo "- SSH to instance using the \`ssh_command\` output" >> $GITHUB_STEP_SUMMARY
+            echo "1. Access your web app: ${{ env.WEBAPP_URL }}" >> $GITHUB_STEP_SUMMARY
+            echo "2. Monitor in [GCP Console](https://console.cloud.google.com/compute/instances?project=marine9007)" >> $GITHUB_STEP_SUMMARY
+            echo "3. View logs in [Cloud Logging](https://console.cloud.google.com/logs?project=marine9007)" >> $GITHUB_STEP_SUMMARY
           fi
           
           if [ "${{ github.event.inputs.action }}" = "destroy" ] && [ "${{ steps.destroy.outcome }}" = "success" ]; then
