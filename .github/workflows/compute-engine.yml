@@ -1,19 +1,25 @@
-name: Deploy to GCP
+name: GCP Compute Engine
 
 on:
-  workflow_dispatch:  # Manual trigger only
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
 
 env:
   TF_VERSION: 1.9.0
 
 jobs:
   terraform:
-    name: Terraform
+    name: Terraform ${{ github.event.inputs.action }}
     runs-on: ubuntu-latest
-    
-    defaults:
-      run:
-        working-directory: .
     
     steps:
       - name: Checkout code
@@ -33,26 +39,27 @@ jobs:
           terraform_version: ${{ env.TF_VERSION }}
       
       - name: Terraform Format Check
-        id: fmt
         run: terraform fmt -check
         continue-on-error: true
       
       - name: Terraform Init
-        id: init
         run: terraform init
       
       - name: Terraform Validate
-        id: validate
         run: terraform validate
       
       - name: Terraform Plan
-        id: plan
-        run: terraform plan -out=tfplan
-        continue-on-error: true
+        if: github.event.inputs.action == 'plan'
+        run: terraform plan
       
       - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+        if: github.event.inputs.action == 'apply'
+        run: |
+          terraform plan -out=tfplan
+          terraform apply -auto-approve tfplan
+          terraform output
       
-      - name: Output Results
-        run: terraform output
+      - name: Terraform Destroy
+        if: github.event.inputs.action == 'destroy'
+        run: terraform destroy -auto-approve
 
